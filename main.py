@@ -173,6 +173,4 @@ def main():
     print("\nHeap-based Greedy Approach Time Taken: " + str(gheap_end - gheap_start))
     print('\n')
 
-    a = 5
-
 main()
