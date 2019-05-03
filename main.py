@@ -2,9 +2,8 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
 import time
-import heapq
 from Item import Item
-
+from max_heap import MaxHeap
 
 def get_array(file):
     array = []
@@ -14,6 +13,10 @@ def get_array(file):
 
 
 def main():
+
+    # array = [1, 5, 3, 6, 1, 2, 5, 7, 8, 10]
+    # maxheap = MaxHeap(array)
+    # maxheap.heapify()
 
     #plt.plot([1, 2, 3, 4], [1, 4, 9, 16], 'go')
     #plt.axis([0, 6, 0, 20])
@@ -106,11 +109,13 @@ def main():
     greedy_array = []
     optimal_subset_g = []
 
+    g_start = time.time()  # start timer here?
+
     for i in range(1, num_items+1):
         greedy_array.append(Item(value_array[i-1], weight_array[i-1], i))
 
     heap_array = greedy_array.copy()  # for Task 2b!
-    g_start = time.time()  # start timer here?
+
     greedy_array.sort(reverse=True)
     total_weight = 0
     total_value = 0
@@ -137,24 +142,17 @@ def main():
     # If the number of objects that are selected by the greedy algorithm is k, then the total complexity is
     # O(n + k log n) which could be better than O(n log n) in some cases (the complexity of best sorting algorithm).
 
-    # HAVE TO IMPLEMENT MY OWN MAX_HEAP
+    # using heap_array from task 2a, should time include making the array of ratios?
+    gheap_start = time.time()  # start timer here?
 
-    # https://docs.python.org/2/library/heapq.html#module-heapq
-    # https://docs.python.org/3.0/library/heapq.html
-
-    # Since heapq is a min heap, we have to multiply the ratios by -1
-    for item in heap_array:
-        item.ratio = item.ratio * -1
-
-    # heapq.heapify(x)
-    # Transform list x into a heap, in-place, in linear time.
-    heapq.heapify(heap_array)
+    maxheap = MaxHeap(heap_array)
+    maxheap.buildheap()
 
     optimal_subset_gheap = []
     total_weight = 0
     total_value = 0
-    gheap_start = time.time()
-    heap_array_length = len(heap_array)
+
+    heap_array_length = len(maxheap.array)
 
     for i in range(heap_array_length):
         if (total_weight + heap_array[0].weight) > W:
@@ -163,7 +161,7 @@ def main():
             optimal_subset_gheap.append(heap_array[0].index)
             total_weight += heap_array[0].weight
             total_value += heap_array[0].value
-            heapq.heappop(heap_array)  # pop item, sifts in log
+            maxheap.deletemax()  # pop item, sifts in log
 
     gheap_end = time.time()
 
